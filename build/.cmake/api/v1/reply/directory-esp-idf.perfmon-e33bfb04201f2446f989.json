@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "esp-idf/perfmon",
+		"source" : "/media/jdx/jdx/esp/esp-idf/components/perfmon"
+	}
+}

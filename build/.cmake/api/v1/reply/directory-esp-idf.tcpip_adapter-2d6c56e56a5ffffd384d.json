@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "esp-idf/tcpip_adapter",
+		"source" : "/media/jdx/jdx/esp/esp-idf/components/tcpip_adapter"
+	}
+}

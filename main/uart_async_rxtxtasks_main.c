@@ -449,6 +449,7 @@ static void tx_task(void *arg)
     int rxBytespi=0;  
     uint8_t* data = (uint8_t*) malloc(RX_BUF_SIZE+1);
     uint8_t id[12];
+    uint8_t flag_task=0;
     id[0]=33;
     id[1]=32;
     id[2]=31;
@@ -490,10 +491,15 @@ static void tx_task(void *arg)
         if(rxBytespi > 0)
         {
             ESP_LOGI(TX_TASK_TAG, "rev data: %d", rxBytespi);
+            
+            ESP_LOG_BUFFER_HEXDUMP(TX_TASK_TAG, data, rxBytespi, ESP_LOG_INFO);
             uart_flush(UART_NUM_1);
+            if(rxBytespi == 4 && data[0]==0xff && data[1]==0xff && data[3] == 0xfe)
+                flag_task = data[2];
         }
-        if (rxBytespi == 5)
+        if (flag_task == 5)
         {
+            flag_task = 0;
             // ESP_LOGI(TX_TASK_TAG, "read data: %d", rxBytespi);
             // sendDatapi(data_state, 20);
             // ESP_LOG_BUFFER_HEXDUMP(TX_TASK_TAG, data, rxBytespi, ESP_LOG_INFO);
@@ -509,7 +515,9 @@ static void tx_task(void *arg)
             //     vTaskDelay(5 / portTICK_PERIOD_MS);
             // }
             uart_flush(UART_NUM_2);
+
             rxBytesbuff = sync_read(id, 12, data_buff);//加入陀螺仪（分开，不要运算）加入指令输入 加入调试功能
+            
             ESP_LOGI(TX_TASK_TAG, "send data: %d", rxBytesbuff);
             sendDatapi(data_buff, rxBytesbuff);
             
@@ -529,8 +537,9 @@ static void tx_task(void *arg)
             // }
             // read_lock = false;
         }
-        else if (rxBytespi == 4)
+        else if (flag_task == 4)
         {
+            flag_task = 0;
             // ESP_LOGI(TX_TASK_TAG, "read data: %d", rxBytespi);
             // sendDatapi(data_state, 20);
             // ESP_LOG_BUFFER_HEXDUMP(TX_TASK_TAG, data, rxBytespi, ESP_LOG_INFO);
@@ -546,7 +555,7 @@ static void tx_task(void *arg)
             //     vTaskDelay(5 / portTICK_PERIOD_MS);
             // }
             uart_flush(UART_NUM_2);
-            rxBytes1 = sync_read(id1, 5, data_state);//加入陀螺仪（分开，不要运算）加入指令输入 加入调试功能
+            rxBytes1 = sync_read(id1, 5, data_state);//陀螺仪数据
             ESP_LOGI(TX_TASK_TAG, "send gyro: %d", rxBytes1);
             sendDatapi(data_state, rxBytes1);
             // ESP_LOG_BUFFER_HEXDUMP(TX_TASK_TAG, data_buff, rxBytesbuff, ESP_LOG_INFO);
@@ -565,8 +574,9 @@ static void tx_task(void *arg)
             // }
             // read_lock = false;
         }
-        else if (rxBytespi == 7)
+        else if (flag_task == 7)//校正
         {
+            flag_task = 0;
             // ESP_LOGI(TX_TASK_TAG, "read data: %d", rxBytespi);
             // sendDatapi(data_state, 20);
             // ESP_LOG_BUFFER_HEXDUMP(TX_TASK_TAG, data, rxBytespi, ESP_LOG_INFO);
@@ -645,3 +655,4 @@ void app_main(void)
     // xTaskCreate(rx_task, "uart_rx_task", 1024*2, NULL, 5, NULL);
     xTaskCreate(tx_task, "uart_tx_task", 1024*2, NULL, 6, NULL);
 }
+//关闭了看门狗 menuconfig 

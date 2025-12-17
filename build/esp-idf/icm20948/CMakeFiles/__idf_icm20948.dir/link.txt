@@ -1,0 +1,2 @@
+/home/jdx/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ar qc libicm20948.a CMakeFiles/__idf_icm20948.dir/icm20948.c.obj
+/home/jdx/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ranlib libicm20948.a
